@@ -1,45 +1,234 @@
 const express=require('express');
 const bodyParser=require('body-parser');
+const mongoose= require('mongoose');
+const promoRouter = require('../model/promociones')
+const Platos= require('../model/platos');
 const platoRouter=express.Router();
+
 platoRouter.use(bodyParser.json());
 platoRouter.route('/')
-.all((req,res,next)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-})
+
 .get((req,res,next) => {
-    res.end('Se van a enviar todos los datos de los platos');
+    Platos.find({})
+    .then((plato) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(plato);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
+
 .post((req, res, next) =>{
-    res.end('Se va agregar el plato:'+ req.body.name + 'con los datos: '+ req.body.description);
+    Platos.create(req.body)
+    .then((plato) => {
+        console.log('Plato creado ', plato);
+        res.statusCode=200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(plato);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
+
 .put((req,res,next) => {
     res.statusCode=403;
     res.end('La operacion PUT no esta permitida en /menu');
 })
+
 .delete((req,res,next) => {
-    res.end('Borrando todos los platos!');
-});
+    Platos.deleteOne({})
+    .then((resp) => {
+        res.statusCode=200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp);
+    }, (err) => next(err))
+    .catch((err) => next(err));    
+})
 
 platoRouter.route('/:dishId')
-.all((req,res,next)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-})
 .get((req,res,next) => {
-    res.end('Se van a enviar detalles del plato: '+ req.params.dishId+' a ti!');
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(plato);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
+
 .post((req, res, next) =>{
     res.statusCode=403
-    res.end('Operacion no soportada en /dishId'+ req.params.dishId);
+    res.end('Operacion no soportada en /menu/'+ req.params.dishId);
 })
+
 .put((req,res,next) => {
-    res.write('Actualizando el plato: '+ req.params.dishId+'\n');
-    res.end('Se va a actualizar el plato: '+ req.body.name+ ' con los detalles '+ req.body.description);
+    Platos.findByIdAndUpdate(req.params.dishId, {
+        $set: req.body
+    }, {new: true})
+    .then((plato) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(plato);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
+
 .delete((req,res,next) => {
-    res.end('Borrando el plato: '+ req.params.dishId);
+    Platos.findByIdAndRemove(req.params.dishId)
+    .then((plato) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(plato);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 });
+
+platoRouter.route('/:dishId/comments')
+.get((req,res,next) => {
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if (plato != null){
+            res.statusCode=200,
+            res.setHeader('Content-Type', 'application/json');
+            res.json(plato.comments);
+        }
+        else{
+            err = new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);
+        }
+    }, (err) => next(err))
+        .catch((err) => next(err));
+})
+
+.post((req, res, next) =>{
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if (plato != null){
+            plato.comments.addToSet(req.body);
+            plato.save()
+            .then((plato) => {
+                res.statusCode=200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(plato);
+            }, (err) => next(err));
+        }
+        else{
+            err =new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+.put((req,res,next) => {
+    res.statusCode=403;
+    res.end('La operacion PUT no esta permitida en /menu/'+ req.params.dishId + '/comments');
+})
+
+.delete((req,res,next) => {
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if (plato != null){
+            for (var i=(plato.comments.length -1); i>=0; i--)
+                plato.comments.id(plato.comments[i]._id).deleteOne();
+            plato.save()
+            .then((plato) => {
+                res.statusCode=200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(plato);
+            }, (err) => next(err));
+        }
+        else{
+            err =new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));    
+});
+
+platoRouter.route('/:dishId/comments/:commentId')
+.get((req,res,next) => {
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if(plato !=null && plato.comments.id(req.params.commentId)!= null){
+            res.statusCode=200,
+            res.setHeader('Content-Type', 'application/json');
+            res.json(plato.comments.id(req.params.commentId));
+        }
+        else if (plato == null){
+            err =new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);            
+        }
+        else{
+            err =new Error('Comentario '+ req.params.commentId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);             
+        }
+    }, (err) => next(err))
+        .catch((err) => next(err));
+})
+
+.post((req, res, next) =>{
+    res.statusCode=403
+    res.end('Operacion POST no soportada en /menu/'+ req.params.dishId+ '/comments/'+req.params.commentId);
+})
+
+.put((req,res,next) => {
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if(plato !=null && plato.comments.id(req.params.commentId)!= null){
+            if (req.body.rating)
+                plato.comments.id(req.params.commentId).rating = req.body.rating;
+            if (req.body.comment)
+                plato.comments.id(req.params.commentId).comment = req.body.comment; 
+            plato.save()
+            .then((plato) => {
+                res.statusCode=200,
+                res.setHeader('Content-Type', 'application/json');
+                res.json(plato);
+            }, (err) => next (err));
+        }
+        else if (plato == null){
+            err =new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);            
+        }
+        else{
+            err =new Error('Comentario '+ req.params.commentId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);             
+        }
+    }, (err) => next(err))
+        .catch((err) => next(err));
+})
+
+.delete((req,res,next) => {
+    Platos.findById(req.params.dishId)
+    .then((plato) => {
+        if(plato !=null && plato.comments.id(req.params.commentId)!= null){
+            plato.comments.id(req.params.commentId).deleteOne();
+            plato.save()
+            .then((plato) => {
+                res.statusCode=200,
+                res.setHeader('Content-Type', 'application/json');
+                res.json(plato);
+            }, (err) => next (err));
+        }
+        else if (plato == null){
+            err =new Error('Plato '+ req.params.dishId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);            
+        }
+        else{
+            err =new Error('Comentario '+ req.params.commentId + 'no encontrado');
+            err.statusCode=404;
+            return next(err);             
+        }
+    }, (err) => next(err))
+        .catch((err) => next(err));
+});
+
 module.exports=platoRouter;

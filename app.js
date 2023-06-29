@@ -10,6 +10,15 @@ var platoRouter=require('./routes/platoRouter');
 var promoRouter=require('./routes/promoRouter');
 var chefRouter=require('./routes/chefRouter');
 
+const mongoose = require ('mongoose');
+const PLatos = require ('./model/platos.js');
+const url = 'mongodb://localhost:27017/restaurantebdd';
+const conexion = mongoose.connect(url);
+conexion.then((db) => {
+  console.log('Conectado correctamente a MongoDB');
+}, (err) => { console.log(err);
+});
+
 var app = express();
 
 // view engine setup
@@ -19,7 +28,43 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('12345-67890-09876-54321'));
+function auth(req, res, next){
+  console.log(req.signedCookies);
+  if(!req.signedCookies.user){
+    var cabeceraAuth = req.headers.authorization;
+    if(!cabeceraAuth){
+      var err = new Error('No esta autenticado. No ingreso credenciales');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
+    var arregloCredencial = new Buffer.from(cabeceraAuth.split(' ')[1], 'base64').toString().split(':');
+    var usuario = arregloCredencial[0];
+    var password = arregloCredencial[1];
+    if (usuario === 'admin' && password === '1234'){
+      res.cookie('user', 'admin', {signed:true});
+      next();
+    }
+    else{
+      var err = new Error('No esta autenticado. Credenciales incorrectas');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
+  }
+  else{
+    if(req.signedCookies.user === 'admin'){
+      next();
+    }
+    else{
+      var err = new Error('No esta autenticado');
+      err.statur = 401;
+      return next(err);
+    }
+  }
+}
+app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

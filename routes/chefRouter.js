@@ -1,45 +1,76 @@
 const express=require('express');
 const bodyParser=require('body-parser');
+const mongoose= require('mongoose');
+const Chefs= require('../model/chefs');
 const chefRouter=express.Router();
 chefRouter.use(bodyParser.json());
 chefRouter.route('/')
-.all((req,res,next)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-})
 .get((req,res,next) => {
-    res.end('Se van a enviar todos los datos de los chefs');
+    Chefs.find({})
+    .then((chef) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chef);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
 .post((req, res, next) =>{
-    res.end('Se va agregar el chef:'+ req.body.name + 'con los datos: '+ req.body.description);
+    Chefs.create(req.body)
+    .then((chef) => {
+        console.log('Chef creado ', chef);
+        res.statusCode=200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chef);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
 .put((req,res,next) => {
     res.statusCode=403;
-    res.end('La operacion PUT no esta permitida en /chef');
+    res.end('La operacion PUT no esta permitida en /chefs');
 })
 .delete((req,res,next) => {
-    res.end('Borrando todos los chefs!');
+    Chefs.deleteOne({})
+    .then((resp) => {
+        res.statusCode=200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp);
+    }, (err) => next(err))
+    .catch((err) => next(err));    
 });
 
 chefRouter.route('/:id')
-.all((req,res,next)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-})
 .get((req,res,next) => {
-    res.end('Se van a enviar detalles del chef: '+ req.params.id+' a ti!');
+    Chefs.findById(req.params.id)
+    .then((chef) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chef);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
 .post((req, res, next) =>{
     res.statusCode=403
     res.end('Operacion no soportada en /chefs/'+ req.params.id);
 })
 .put((req,res,next) => {
-    res.write('Actualizando el chef: '+ req.params.id+'\n');
-    res.end('Se va a actualizar el chef: '+ req.body.name+ ' con los detalles '+ req.body.description);
+    Chefs.findByIdAndUpdate(req.params.id, {
+        $set: req.body
+    }, {new: true})
+    .then((chef) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chef);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 })
 .delete((req,res,next) => {
-    res.end('Borrando el chef: '+ req.params.id);
+    Chefs.findByIdAndRemove(req.params.id)
+    .then((chef) => {
+        res.statusCode=200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chef);
+    }, (err) => next(err))
+        .catch((err) => next(err));
 });
+
 module.exports=chefRouter;
