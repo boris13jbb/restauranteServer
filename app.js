@@ -5,7 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sesion = require('express-session');
 var FileStore = require('session-file-store')(sesion);
+var passport = require('passport');
 
+var authenticate = require('./authenticate');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var platoRouter=require('./routes/platoRouter');
@@ -39,42 +41,19 @@ app.use(sesion({
   store: new FileStore()
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 function auth(req, res, next){
-  console.log(req.sesion);
-  if(!req.session.user){
-    var cabeceraAuth = req.headers.authorization;
-    if(!cabeceraAuth){
+  if(!req.user){
       var err = new Error('No esta autenticado. No ingreso credenciales');
-      res.setHeader('WWW-Authenticate', 'Basic');
       err.status = 401;
       return next(err);
-    }
-    var arregloCredencial = new Buffer.from(cabeceraAuth.split(' ')[1], 'base64').toString().split(':');
-    var usuario = arregloCredencial[0];
-    var password = arregloCredencial[1];
-    if (usuario === 'admin' && password === '1234'){
-      req.session.user = 'admin';
-      next();
-    }
-    else{
-      var err = new Error('No esta autenticado. Credenciales incorrectas');
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
   }
   else{
-    if(req.session.user === 'admin'){
-      next();
-    }
-    else{
-      var err = new Error('No esta autenticado');
-      err.statur = 401;
-      return next(err);
-    }
+    next();
   }
 }
 app.use(auth);
