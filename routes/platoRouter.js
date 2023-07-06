@@ -1,13 +1,11 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 const mongoose= require('mongoose');
-const promoRouter = require('../model/promociones')
+const authenticate=require('../authenticate');
 const Platos= require('../model/platos');
 const platoRouter=express.Router();
-
 platoRouter.use(bodyParser.json());
 platoRouter.route('/')
-
 .get((req,res,next) => {
     Platos.find({})
     .then((plato) => {
@@ -17,8 +15,7 @@ platoRouter.route('/')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.post((req, res, next) =>{
+.post(authenticate.verifyUser, (req, res, next) =>{
     Platos.create(req.body)
     .then((plato) => {
         console.log('Plato creado ', plato);
@@ -28,13 +25,11 @@ platoRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-
-.put((req,res,next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
     res.statusCode=403;
     res.end('La operacion PUT no esta permitida en /menu');
 })
-
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
     Platos.deleteOne({})
     .then((resp) => {
         res.statusCode=200;
@@ -54,13 +49,11 @@ platoRouter.route('/:dishId')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.post((req, res, next) =>{
+.post(authenticate.verifyUser, (req, res, next) =>{
     res.statusCode=403
     res.end('Operacion no soportada en /menu/'+ req.params.dishId);
 })
-
-.put((req,res,next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
     Platos.findByIdAndUpdate(req.params.dishId, {
         $set: req.body
     }, {new: true})
@@ -71,8 +64,7 @@ platoRouter.route('/:dishId')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
     Platos.findByIdAndRemove(req.params.dishId)
     .then((plato) => {
         res.statusCode=200,
@@ -99,8 +91,7 @@ platoRouter.route('/:dishId/comments')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.post((req, res, next) =>{
+.post(authenticate.verifyUser, (req, res, next) =>{
     Platos.findById(req.params.dishId)
     .then((plato) => {
         if (plato != null){
@@ -120,18 +111,16 @@ platoRouter.route('/:dishId/comments')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-
-.put((req,res,next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
     res.statusCode=403;
     res.end('La operacion PUT no esta permitida en /menu/'+ req.params.dishId + '/comments');
 })
-
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
     Platos.findById(req.params.dishId)
     .then((plato) => {
         if (plato != null){
             for (var i=(plato.comments.length -1); i>=0; i--)
-                plato.comments.id(plato.comments[i]._id).deleteOne();
+                plato.comments.id(plato.comments[i]._id).remove();
             plato.save()
             .then((plato) => {
                 res.statusCode=200;
@@ -170,13 +159,11 @@ platoRouter.route('/:dishId/comments/:commentId')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.post((req, res, next) =>{
+.post(authenticate.verifyUser, (req, res, next) =>{
     res.statusCode=403
     res.end('Operacion POST no soportada en /menu/'+ req.params.dishId+ '/comments/'+req.params.commentId);
 })
-
-.put((req,res,next) => {
+.put(authenticate.verifyUser, (req,res,next) => {
     Platos.findById(req.params.dishId)
     .then((plato) => {
         if(plato !=null && plato.comments.id(req.params.commentId)!= null){
@@ -204,12 +191,11 @@ platoRouter.route('/:dishId/comments/:commentId')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-
-.delete((req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
     Platos.findById(req.params.dishId)
     .then((plato) => {
         if(plato !=null && plato.comments.id(req.params.commentId)!= null){
-            plato.comments.id(req.params.commentId).deleteOne();
+            plato.comments.id(req.params.commentId).remove();
             plato.save()
             .then((plato) => {
                 res.statusCode=200,
@@ -230,5 +216,4 @@ platoRouter.route('/:dishId/comments/:commentId')
     }, (err) => next(err))
         .catch((err) => next(err));
 });
-
 module.exports=platoRouter;
