@@ -3,22 +3,21 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var sesion = require('express-session');
-var FileStore = require('session-file-store')(sesion);
+var sesion=require('express-session');
+var FileStore=require('session-file-store')(sesion);
 var passport = require('passport');
-
 var authenticate = require('./authenticate');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var platoRouter=require('./routes/platoRouter');
 var promoRouter=require('./routes/promoRouter');
 var chefRouter=require('./routes/chefRouter');
-
-const mongoose = require ('mongoose');
-const PLatos = require ('./model/platos.js');
-const url = 'mongodb://localhost:27017/restaurantebdd';
+const mongoose=require('mongoose');
+const Platos= require('./model/platos');
+var config=require('./config');
+const url= config.mongoUrl;
 const conexion = mongoose.connect(url);
-conexion.then((db) => {
+conexion.then((db) =>{
   console.log('Conectado correctamente a MongoDB');
 }, (err) => { console.log(err);
 });
@@ -32,33 +31,13 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser('12345-67890-09876-54321'));
-app.use(sesion({
-  name: 'session-id',
-  secret: '12345-67890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
 
 app.use(passport.initialize());
-app.use(passport.session());
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-function auth(req, res, next){
-  if(!req.user){
-      var err = new Error('No esta autenticado. No ingreso credenciales');
-      err.status = 401;
-      return next(err);
-  }
-  else{
-    next();
-  }
-}
-app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/menu', platoRouter);
 app.use('/menu/:dishId', platoRouter);

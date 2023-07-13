@@ -15,7 +15,7 @@ chefRouter.route('/')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req, res, next) =>{
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) =>{
     Chefs.create(req.body)
     .then((chef) => {
         console.log('Chef creado ', chef);
@@ -25,11 +25,11 @@ chefRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('La operacion PUT no esta permitida en /chefs');
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Chefs.deleteOne({})
     .then((resp) => {
         res.statusCode=200;
@@ -49,11 +49,11 @@ chefRouter.route('/:id')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req, res, next) =>{
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) =>{
     res.statusCode=403
     res.end('Operacion no soportada en /chefs/'+ req.params.id);
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Chefs.findByIdAndUpdate(req.params.id, {
         $set: req.body
     }, {new: true})
@@ -64,7 +64,7 @@ chefRouter.route('/:id')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Chefs.findByIdAndRemove(req.params.id)
     .then((chef) => {
         res.statusCode=200,

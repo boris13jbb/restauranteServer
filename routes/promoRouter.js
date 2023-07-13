@@ -6,6 +6,7 @@ const Promos= require('../model/promociones');
 const promoRouter=express.Router();
 promoRouter.use(bodyParser.json());
 promoRouter.route('/')
+
 .get((req,res,next) => {
     Promos.find({})
     .then((promocion) => {
@@ -15,7 +16,7 @@ promoRouter.route('/')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req, res, next) =>{
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) =>{
     Promos.create(req.body)
     .then((promocion) => {
         console.log('Promocion creada ', promocion);
@@ -25,11 +26,11 @@ promoRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('La operacion PUT no esta permitida en /promociones');
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promos.deleteOne({})
     .then((resp) => {
         res.statusCode=200;
@@ -50,11 +51,11 @@ promoRouter.route('/:id')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req, res, next) =>{
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) =>{
     res.statusCode=403
     res.end('Operacion no soportada en /promociones/'+ req.params.id);
 })
-.put(authenticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promos.findByIdAndUpdate(req.params.id, {
         $set: req.body
     }, {new: true})
@@ -65,7 +66,7 @@ promoRouter.route('/:id')
     }, (err) => next(err))
         .catch((err) => next(err));
 })
-.delete(authenticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promos.findByIdAndRemove(req.params.id)
     .then((promocion) => {
         res.statusCode=200,
