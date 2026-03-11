@@ -2,7 +2,7 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const mongoose= require('mongoose');
 const authenticate=require('../authenticate');
-const Platos= require('../model/platos');
+const Platos= require('../modelos/platos');
 const platoRouter=express.Router();
 platoRouter.use(bodyParser.json());
 platoRouter.route('/')

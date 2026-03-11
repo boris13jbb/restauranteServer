@@ -2,7 +2,7 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const mongoose= require('mongoose');
 const authenticate=require('../authenticate');
-const Chefs= require('../model/chefs');
+const Chefs= require('../modelos/chefs');
 const chefRouter=express.Router();
 chefRouter.use(bodyParser.json());
 chefRouter.route('/')

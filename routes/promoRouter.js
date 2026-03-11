@@ -2,7 +2,7 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const mongoose= require('mongoose');
 const authenticate=require('../authenticate');
-const Promos= require('../model/promociones');
+const Promos= require('../modelos/promociones');
 const promoRouter=express.Router();
 promoRouter.use(bodyParser.json());
 promoRouter.route('/')

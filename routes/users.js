@@ -3,7 +3,7 @@ var passport= require('passport');
 var authenticate=require('../authenticate');
 //const {authenticate} = require('passport');
 const bodyParser=require('body-parser');
-var User=require('../model/user');
+var User=require('../modelos/user');
 var router = express.Router();
 router.use(bodyParser.json());
 
@@ -44,8 +44,16 @@ router.post('/login', passport.authenticate('local'), (req,res,next) => {
 });
 
 router.get('/logout', (req,res) => {
-  req.logout();
-  res.redirect('/');
+  const done = (err) => {
+    if (err) return res.status(500).json({ err: err.message || err });
+    res.redirect('/');
+  };
+  // Passport 0.6 requiere callback; versiones anteriores no.
+  if (typeof req.logout === 'function' && req.logout.length > 0) req.logout(done);
+  else {
+    try { req.logout(); } catch (e) { return done(e); }
+    done();
+  }
 });
 
 module.exports = router;
