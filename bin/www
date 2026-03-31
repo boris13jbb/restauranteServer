@@ -31,7 +31,7 @@ var server = http.createServer(app);
 function startServers(startPort) {
   var p = startPort;
   app.set('port', p);
-  app.set('secPort', p + 443);
+  // app.set('secPort', p + 443); // Deshabilitado temporalmente
 
   server = http.createServer(app);
   server.on('error', (err) => onError(err, p));
@@ -41,6 +41,8 @@ function startServers(startPort) {
     console.log('Servidor HTTP escuchando en el puerto', p);
   });
 
+  // HTTPS deshabilitado temporalmente por incompatibilidad con Node 25
+  /*
   var options = {
     key: fs.readFileSync(__dirname + '/private.key'),
     cert: fs.readFileSync(__dirname + '/certificate.pem')
@@ -52,6 +54,7 @@ function startServers(startPort) {
   secureServer.listen(app.get('secPort'), () => {
     console.log('Servidor Seguro escuhando en el puerto', app.get('secPort'));
   });
+  */
 }
 
 startServers(port);

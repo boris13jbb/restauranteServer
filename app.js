@@ -17,27 +17,23 @@ const mongoose=require('mongoose');
 const Platos= require('./modelos/platos');
 var config=require('./config');
 const url = config.mongoUrl;
-const conexion = mongoose.connect(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-conexion.then((db) => {
-  console.log('Conectado correctamente a MongoDB');
-}).catch((err) => {
-  console.error('Error al conectar con MongoDB:', err.message);
-  console.error('Asegúrate de que MongoDB esté instalado y en ejecución (puerto 27017).');
-});
+
+// Conexión a MongoDB sin opciones obsoletas (Mongoose 8+)
+mongoose.connect(url)
+  .then((db) => {
+    console.log('Conectado correctamente a MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error al conectar con MongoDB:', err.message);
+    console.error('Asegúrate de que MongoDB esté instalado y en ejecución (puerto 27017).');
+  });
 
 var app = express();
 
 // Favicon: responder antes de cualquier otra ruta para evitar 404
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
-// Redirigir a HTTPS solo en producción (en desarrollo evita problemas con certificado autofirmado)
-app.all('*', (req, res, next) => {
-  if (req.secure || app.get('env') !== 'production') return next();
-  res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
-});
+// Redirección a HTTPS deshabilitada temporalmente (solo HTTP para desarrollo)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

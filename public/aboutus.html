@@ -1,7 +1,120 @@
-<html>
-    <title>Este es el Acerca de</title>
-    <body>
-        <h1>Aboutu.html</h1>
-        <p>Este es el contenido del archivo about us</p>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros - Restaurante Delicioso</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        nav {
+            background: #333;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1.1rem;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #333;
+            color: white;
+            margin-top: 2rem;
+        }
+
+        .team {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Restaurante Delicioso</h1>
+        <p>El mejor sabor de la cocina</p>
+    </header>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/menu">Menú</a>
+        <a href="/promociones">Promociones</a>
+        <a href="/chefs">Chefs</a>
+        <a href="/aboutus.html">Nosotros</a>
+    </nav>
+    <div class="container">
+        <h1>Sobre Nosotros</h1>
+        <p style="font-size: 1.2rem; line-height: 1.6;">
+            Somos un restaurante dedicado a ofrecer la mejor experiencia culinaria.
+            Con años de experiencia en la industria, nuestro equipo de chefs expertos
+            combina tradición e innovación para crear platos inolvidables.
+        </p>
+        <p style="font-size: 1.2rem; line-height: 1.6;">
+            Utilizamos únicamente ingredientes frescos y de la más alta calidad,
+            trabajando con proveedores locales para asegurar la frescura de nuestros productos.
+        </p>
+    
+        <h2 style="color: #667eea; margin-top: 2rem;">Nuestro Equipo</h2>
+        <div class="team">
+            <div class="team-member">
+                <h3>👨‍ Chef Ejecutivo</h3>
+                <p>Con más de 20 años de experiencia en cocina internacional.</p>
+            </div>
+            <div class="team-member">
+                <h3>🍳 Chef de Cocina</h3>
+                <p>Especialista en técnicas modernas y presentación.</p>
+            </div>
+            <div class="team-member">
+                <h3>🍰 Chef Pastelero</h3>
+                <p>Experto en crear postres que deleitan los sentidos.</p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2026 Restaurante Delicioso. Todos los derechos reservados.</p>
+    </footer>
     </body>
 </html>

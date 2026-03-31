@@ -7,8 +7,12 @@ var User = require('./modelos/user');
 const config = require('./config');
 
 passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser((user, cb) => {
+    process.nextTick(() => cb(null, { id: user.id, username: user.username, admin: user.admin }));
+});
+passport.deserializeUser((user, cb) => {
+    process.nextTick(() => cb(null, user));
+});
 
 exports.getToken= function(user){
     return jwt.sign(user, config.secretKey, 
@@ -18,31 +22,33 @@ var opts={};
 opts.jwtFromRequest=ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey= config.secretKey;
 exports.jwPassport= passport.use(new JwtStrategy (opts,
-    (jwt_payload, done) => {
+    async (jwt_payload, done) => {
         console.log("JWT payload: ", jwt_payload);
-        User.findOne({_id: jwt_payload._id}, (err, user) => {
-            if(err)
-                return done(err, false);
-            else if(user)
+        try {
+            const user = await User.findOne({ _id: jwt_payload._id });
+            if (user)
                 return done(null, user);
             else
                 return done(null,false);
-    });
-}));
+        } catch (err) {
+            return done(err, false);
+        }
+    }));
 
 exports.verifyUser = passport.authenticate('jwt', { session: false});
 
-exports.verifyAdmin = function(req, res, next) {
-    User.findOne({_id: req.user._id})
-    .then((user) => {
-        if (user.admin) {
+exports.verifyAdmin = async function (req, res, next) {
+    try {
+        const user = await User.findOne({ _id: req.user._id });
+        if (user && user.admin) {
             next();
         }
         else {
             err = new Error('No autorizado a realizar esta accion!');
             err.status = 403;
             return next(err);
-        } 
-    }, (err) => next(err))
-    .catch((err) => next(err))
+        }
+    } catch (err) {
+        next(err);
+    }
 };

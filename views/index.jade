@@ -1,5 +1,23 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h2 Bienvenidos a Nuestro Restaurante
+  p(style='font-size: 1.2rem; line-height: 1.6;')
+    | Descubre los sabores más exquisitos de nuestra cocina. 
+    | Preparamos cada plato con pasión y los mejores ingredientes.
+  
+  .highlights(style='display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;')
+    .card(style='padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; text-align: center;')
+      h3(style='color: #667eea;') 🍽️ Menú Variado
+      p Explora nuestra amplia selección de platos preparados con los mejores ingredientes.
+      a(href='/menu', style='display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;') Ver Menú
+    
+    .card(style='padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; text-align: center;')
+      h3(style='color: #667eea;') ⭐ Promociones
+      p Aprovecha nuestras ofertas especiales y descuentos exclusivos.
+      a(href='/promociones', style='display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;') Ver Promociones
+    
+    .card(style='padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; text-align: center;')
+      h3(style='color: #667eea;') 👨‍🍳 Chefs Expertos
+      p Conoce a nuestro equipo de chefs profesionales dedicados a la excelencia culinaria.
+      a(href='/chefs', style='display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;') Conocer Chefs

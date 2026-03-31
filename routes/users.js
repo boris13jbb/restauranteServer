@@ -8,32 +8,30 @@ var router = express.Router();
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get('/', authenticate.verifyUser, authenticate.verifyAdmin,  function(req, res, next) {
-  User.find({})
-  .then((users) =>{
+router.get('/', authenticate.verifyUser, authenticate.verifyAdmin, async function (req, res, next) {
+  try {
+    const users = await User.find({});
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json(users);
-  }, (err) => next(err))
-  .catch((err) => next(err));
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.post('/registrarse', (req,res,next) => {
-  User.register(new User({username: req.body.username}),
-  req.body.password, (err, user) => {
-    if(err){
-      res.statusCode = 500;
+router.post('/registrarse', async (req, res, next) => {
+  try {
+    const user = await User.register(new User({ username: req.body.username }), req.body.password);
+    passport.authenticate('local')(req, res, () => {
+      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});      
-    }
-    else{
-      passport.authenticate('local')(req, res, () => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({success: true, status: 'Registro correcto!'});
-      });
-    }
-  });
+      res.json({ success: true, status: 'Registro correcto!' });
+    });
+  } catch (err) {
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ err: err });
+  }
 });
 
 router.post('/login', passport.authenticate('local'), (req,res,next) => { 
