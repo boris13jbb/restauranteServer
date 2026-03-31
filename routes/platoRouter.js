@@ -5,6 +5,20 @@ const authenticate=require('../authenticate');
 const Platos= require('../modelos/platos');
 const platoRouter=express.Router();
 platoRouter.use(bodyParser.json());
+
+// Endpoint API para datos del menú (usado por el frontend)
+platoRouter.get('/api-data', async (req, res, next) => {
+    try {
+        const platos = await Platos.find({}).populate('comments.author');
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(platos);
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Rutas CRUD existentes
 platoRouter.route('/')
 
     .get(async (req, res, next) => {

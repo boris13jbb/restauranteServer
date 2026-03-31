@@ -5,6 +5,19 @@ const authenticate=require('../authenticate');
 const Promos= require('../modelos/promociones');
 const promoRouter=express.Router();
 promoRouter.use(bodyParser.json());
+
+// Endpoint API para datos de promociones (usado por el frontend)
+promoRouter.get('/api-data', (req, res, next) => {
+    Promos.find({})
+        .then((promos) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(promos);
+        }, (err) => next(err))
+        .catch((err) => next(err));
+});
+
+// Rutas CRUD existentes
 promoRouter.route('/')
 
 .get((req,res,next) => {

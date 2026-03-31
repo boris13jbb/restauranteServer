@@ -1,0 +1,71 @@
+extends layout
+
+block content
+  .menu-header
+    h1 🍽️ Nuestro Menú
+    p Descubre los sabores más exquisitos preparados con pasión y los mejores ingredientes
+  
+  .menu-filters
+    .filter-btn.active(data-filter='todos') Todos
+    .filter-btn(data-filter='entrada') Entradas
+    .filter-btn(data-filter='principal') Platos Principales
+    .filter-btn(data-filter='postre') Postres
+    .filter-btn(data-filter='bebida') Bebidas
+  
+  .menu-grid#menuContainer
+    // El contenido se cargará dinámicamente desde la API
+    
+  script.
+    // Cargar menú dinámicamente
+    fetch('/menu/api-data')
+      .then(response => response.json())
+      .then(data => {
+        const menuContainer = document.getElementById('menuContainer');
+        
+        if (data.length === 0) {
+          menuContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🍴</div>
+              <h3>Menú Próximamente</h3>
+              <p>Estamos preparando deliciosas novedades para ti</p>
+            </div>
+          `;
+          return;
+        }
+        
+        const renderMenu = (filter = 'todos') => {
+          const filteredData = filter === 'todos' 
+            ? data 
+            : data.filter(item => item.category === filter);
+          
+          menuContainer.innerHTML = filteredData.map(item => `
+            <div class="dish-card" data-category="${item.category || 'principal'}">
+              ${item.image ? `<div class="dish-image" style="background-image: url('${item.image}')"></div>` : '<div class="dish-image placeholder">🍽️</div>'}
+              <div class="dish-badge">${item.category || 'Especialidad'}</div>
+              <div class="dish-content">
+                <h3 class="dish-name">${item.name || 'Plato Especial'}</h3>
+                <p class="dish-description">${item.description || 'Deliciosa preparación de la casa'}</p>
+                <div class="dish-footer">
+                  <div class="dish-price">$${(item.price || 0).toFixed(2)}</div>
+                  ${item.rating ? `<div class="dish-rating">⭐ ${item.rating.toFixed(1)}</div>` : ''}
+                </div>
+              </div>
+            </div>
+          `).join('');
+        };
+        
+        renderMenu();
+        
+        // Event listeners para filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            renderMenu(this.dataset.filter);
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Error cargando el menú:', error);
+        document.getElementById('menuContainer').innerHTML = '<div class="error-state">Error cargando el menú</div>';
+      });

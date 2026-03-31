@@ -1,0 +1,65 @@
+extends layout
+
+block content
+  .promos-header
+    h1 ⭐ Promociones Especiales
+    p Aprovecha nuestras ofertas exclusivas por tiempo limitado
+  
+  .promos-timeline
+    .timeline-item
+      .timeline-marker 🎁
+      .timeline-content
+        h3 Ofertas del Día
+        p Descuentos especiales todos los días
+  
+  .promos-grid#promosContainer
+    // El contenido se cargará dinámicamente desde la API
+    
+  .promo-banner
+    .banner-content
+      h2 🎉 ¡Únete a Nuestro Club de Beneficios!
+      p Recibe promociones exclusivas y descuentos especiales directamente en tu correo
+      button.banner-btn Suscribirse Ahora
+  
+  script.
+    // Cargar promociones dinámicamente
+    fetch('/promociones/api-data')
+      .then(response => response.json())
+      .then(data => {
+        const promosContainer = document.getElementById('promosContainer');
+        
+        if (data.length === 0) {
+          promosContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🎊</div>
+              <h3>Promociones Próximamente</h3>
+              <p>Muy pronto tendrás ofertas increíbles para disfrutar</p>
+            </div>
+          `;
+          return;
+        }
+        
+        promosContainer.innerHTML = data.map((promo, index) => `
+          <div class="promo-card ${index % 3 === 0 ? 'featured' : ''}">
+            ${promo.image ? `<div class="promo-image" style="background-image: url('${promo.image}')"></div>` : '<div class="promo-image placeholder">🎁</div>'}
+            <div class="promo-badge">${promo.type || 'Oferta Especial'}</div>
+            ${promo.discount ? `<div class="promo-discount">-${promo.discount}%</div>` : ''}
+            <div class="promo-content">
+              <h3 class="promo-title">${promo.name || 'Promoción Especial'}</h3>
+              <p class="promo-description">${promo.description || 'Aprovecha esta oferta exclusiva'}</p>
+              ${promo.validUntil ? `<div class="promo-validity">Válido hasta: ${new Date(promo.validUntil).toLocaleDateString()}</div>` : ''}
+              <div class="promo-footer">
+                <div class="promo-price">
+                  ${promo.priceBefore ? `<span class="old-price">$${promo.priceBefore.toFixed(2)}</span>` : ''}
+                  <span class="new-price">$${(promo.price || 0).toFixed(2)}</span>
+                </div>
+                <button class="promo-btn">Ver Detalles</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      })
+      .catch(error => {
+        console.error('Error cargando las promociones:', error);
+        document.getElementById('promosContainer').innerHTML = '<div class="error-state">Error cargando las promociones</div>';
+      });

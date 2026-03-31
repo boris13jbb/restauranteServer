@@ -1,0 +1,141 @@
+extends layout
+
+block content
+  .chefs-hero
+    .hero-content
+      h1 👨‍🍳 Nuestros Chefs Maestros
+      p Conoce a los genios culinarios detrás de cada plato extraordinario
+    .floating-elements
+      .float-element 🍳
+      .float-element 🥘
+      .float-element 🍽️
+  
+  .chefs-intro
+    .intro-card
+      h2 🌟 Maestría Culinaria en 3D
+      p Cada chef es una obra de arte. Pasa el cursor sobre las tarjetas para descubrir sus secretos.
+  
+  .chefs-3d-container#chefsContainer
+    // El contenido se cargará dinámicamente desde la API
+  
+  .chefs-stats
+    .stat-item
+      .stat-number 🏆
+      .stat-label Años de Experiencia
+    .stat-item
+      .stat-number ⭐
+      .stat-label Platos Creados
+    .stat-item
+      .stat-number 🎖️
+      .stat-label Premios Internacionales
+  
+  script.
+    // Efecto de paralaje con el mouse
+    document.addEventListener('mousemove', (e) => {
+      const cards = document.querySelectorAll('.chef-card-3d');
+      const mouseX = e.clientX / window.innerWidth - 0.5;
+      const mouseY = e.clientY / window.innerHeight - 0.5;
+      
+      cards.forEach(card => {
+        const rotateY = mouseX * 10;
+        const rotateX = -mouseY * 10;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+    });
+    
+    // Cargar chefs dinámicamente
+    fetch('/chefs/api-data')
+      .then(response => response.json())
+      .then(data => {
+        const chefsContainer = document.getElementById('chefsContainer');
+        
+        if (data.length === 0) {
+          chefsContainer.innerHTML = `
+            <div class="empty-state-3d">
+              <div class="empty-icon-3d">👨‍🍳</div>
+              <h3>Chefs Próximamente</h3>
+              <p>Nuestros maestros culinarios están preparando sorpresas increíbles</p>
+            </div>
+          `;
+          return;
+        }
+        
+        chefsContainer.innerHTML = data.map((chef, index) => `
+          <div class="chefs-grid" style="animation-delay: ${index * 0.2}s">
+            <div class="chef-card-3d" data-featured="${chef.featured || false}">
+              <div class="card-inner-3d">
+                <!-- Frente de la tarjeta -->
+                <div class="card-front-3d">
+                  <div class="chef-image-container-3d">
+                    ${chef.image 
+                      ? `<img src="${chef.image}" alt="${chef.name}" class="chef-img-3d">`
+                      : '<div class="chef-placeholder-3d">👨‍🍳</div>'
+                    }
+                    <div class="chef-glow-effect"></div>
+                  </div>
+                  
+                  <div class="chef-badge-featured-3d" style="display: ${chef.featured ? 'block' : 'none'}">
+                    ⭐ Chef Destacado
+                  </div>
+                  
+                  <div class="chef-info-front-3d">
+                    <h3 class="chef-name-3d">${chef.name || 'Chef Maestro'}</h3>
+                    <p class="chef-designation-3d">${chef.designation || 'Cocinero Experto'}</p>
+                    <div class="chef-divider-3d"></div>
+                    <p class="chef-abbr-3d">${chef.abbr || 'Especialidad'}</p>
+                  </div>
+                  
+                  <div class="hover-hint-3d">
+                    <span>🔄 Gira para conocer más</span>
+                  </div>
+                </div>
+                
+                <!-- Reverso de la tarjeta -->
+                <div class="card-back-3d">
+                  <div class="chef-info-back-3d">
+                    <h3 class="chef-back-title-3d">📖 Su Historia</h3>
+                    <p class="chef-description-3d">${chef.description || 'Un maestro culinario dedicado a la excelencia gastronómica'}</p>
+                    
+                    <div class="chef-skills-3d">
+                      <div class="skill-bar-3d">
+                        <span class="skill-name-3d">Creatividad</span>
+                        <div class="skill-progress-3d" style="width: 95%"></div>
+                      </div>
+                      <div class="skill-bar-3d">
+                        <span class="skill-name-3d">Técnica</span>
+                        <div class="skill-progress-3d" style="width: 90%"></div>
+                      </div>
+                      <div class="skill-bar-3d">
+                        <span class="skill-name-3d">Presentación</span>
+                        <div class="skill-progress-3d" style="width: 98%"></div>
+                      </div>
+                    </div>
+                    
+                    <div class="chef-social-3d">
+                      <button class="social-btn-3d">📷 Instagram</button>
+                      <button class="social-btn-3d">🐦 Twitter</button>
+                      <button class="social-btn-3d">💼 LinkedIn</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        
+        // Agregar efectos hover 3D individuales
+        const cards = document.querySelectorAll('.chef-card-3d');
+        cards.forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            card.classList.add('active-3d');
+          });
+          
+          card.addEventListener('mouseleave', () => {
+            card.classList.remove('active-3d');
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Error cargando los chefs:', error);
+        document.getElementById('chefsContainer').innerHTML = '<div class="error-state-3d">Error cargando los chefs</div>';
+      });

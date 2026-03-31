@@ -50,9 +50,26 @@ app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/menu', platoRouter);
+// Rutas para las vistas HTML (deben ir ANTES de los redireccionamientos)
+app.get('/menu/vista', (req, res) => {
+  res.render('menu', { title: 'Nuestro Menú - Restaurante Delicioso' });
+});
+app.get('/promociones/vista', (req, res) => {
+  res.render('promociones', { title: 'Promociones - Restaurante Delicioso' });
+});
+
+// Redireccionar /menu y /promociones a sus respectivas vistas
+app.get('/menu', (req, res) => {
+  res.redirect('/menu/vista');
+});
+app.get('/promociones', (req, res) => {
+  res.redirect('/promociones/vista');
+});
+
+// Endpoints API para datos
+app.use('/menu/api-data', platoRouter);
 app.use('/menu/:dishId', platoRouter);
-app.use('/promociones', promoRouter);
+app.use('/promociones/api-data', promoRouter);
 app.use('/promociones/:id', promoRouter);
 app.use('/chefs', chefRouter);
 app.use('/chefs/:id', chefRouter);

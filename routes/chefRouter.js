@@ -5,6 +5,17 @@ const authenticate=require('../authenticate');
 const Chefs= require('../modelos/chefs');
 const chefRouter=express.Router();
 chefRouter.use(bodyParser.json());
+
+// Endpoint API para datos de chefs (usado por el frontend)
+chefRouter.get('/api-data', (req, res, next) => {
+    Chefs.find({})
+    .then((chefs) => {
+        res.statusCode=200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(chefs);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
 chefRouter.route('/')
 .get((req,res,next) => {
     Chefs.find({})

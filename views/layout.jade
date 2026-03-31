@@ -49,6 +49,267 @@ html
         color: white;
         margin-top: 2rem;
       }
+      /* Estilos Profesionales para el Menú */
+      .menu-header, .promos-header {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px 12px 0 0;
+        margin: -2rem -2rem 2rem -2rem;
+      }
+      .menu-header h1, .promos-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      .menu-header p, .promos-header p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+      }
+      .menu-filters {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+      .filter-btn {
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .filter-btn:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+      }
+      .filter-btn.active {
+        background: #667eea;
+        color: white;
+      }
+      .menu-grid, .promos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      .dish-card, .promo-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      .dish-card:hover, .promo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      }
+      .dish-image, .promo-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-color: #f8f9fa;
+      }
+      .dish-image.placeholder, .promo-image.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .dish-badge, .promo-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .promo-discount {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #ff4757;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      .dish-content, .promo-content {
+        padding: 1.5rem;
+      }
+      .dish-name, .promo-title {
+        font-size: 1.4rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+      .dish-description, .promo-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+      .dish-footer, .promo-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #f0f0f0;
+      }
+      .dish-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+      .dish-rating {
+        font-size: 1.1rem;
+        color: #ffa502;
+      }
+      .promo-price {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .old-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 1rem;
+      }
+      .new-price {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #ff4757;
+      }
+      .promo-btn, .banner-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .promo-btn:hover, .banner-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+      }
+      .promo-validity {
+        background: #fff3cd;
+        color: #856404;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        margin: 1rem 0;
+      }
+      .promo-card.featured {
+        grid-row: span 1;
+        border: 3px solid #667eea;
+      }
+      .promo-banner {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        padding: 3rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 3rem;
+      }
+      .promo-banner h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+      .promo-banner p {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        grid-column: 1 / -1;
+      }
+      .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+      }
+      .empty-state h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+      .error-state {
+        text-align: center;
+        padding: 2rem;
+        background: #f8d7da;
+        color: #721c24;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      .promos-timeline {
+        margin: 2rem 0;
+        padding: 2rem;
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        border-radius: 12px;
+      }
+      .timeline-item {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .timeline-marker {
+        font-size: 3rem;
+      }
+      .timeline-content h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 0.3rem;
+      }
+      .timeline-content p {
+        color: #666;
+        font-size: 1rem;
+      }
+      @media (max-width: 768px) {
+        .menu-header h1, .promos-header h1 {
+          font-size: 2rem;
+        }
+        .menu-grid, .promos-grid {
+          grid-template-columns: 1fr;
+        }
+        .menu-filters {
+          flex-direction: column;
+        }
+        .filter-btn {
+          width: 100%;
+        }
+      }
   body
     header
       h1 Restaurante Delicioso
