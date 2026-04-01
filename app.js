@@ -57,6 +57,9 @@ app.get('/menu/vista', (req, res) => {
 app.get('/promociones/vista', (req, res) => {
   res.render('promociones', { title: 'Promociones - Restaurante Delicioso' });
 });
+app.get('/chefs/vista', (req, res) => {
+  res.render('chefs', { title: 'Nuestros Chefs - Restaurante Delicioso' });
+});
 
 // Redireccionar /menu y /promociones a sus respectivas vistas
 app.get('/menu', (req, res) => {
@@ -65,13 +68,16 @@ app.get('/menu', (req, res) => {
 app.get('/promociones', (req, res) => {
   res.redirect('/promociones/vista');
 });
+app.get('/chefs', (req, res) => {
+  res.redirect('/chefs/vista');
+});
 
 // Endpoints API para datos
 app.use('/menu/api-data', platoRouter);
 app.use('/menu/:dishId', platoRouter);
 app.use('/promociones/api-data', promoRouter);
 app.use('/promociones/:id', promoRouter);
-app.use('/chefs', chefRouter);
+app.use('/chefs/api-data', chefRouter);
 app.use('/chefs/:id', chefRouter);
 app.use('/imageUpload', uploadRouter);
 
